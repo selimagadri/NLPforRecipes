@@ -16,8 +16,8 @@
 1. **Data clean-up:** Ensure data consistency by standardizing ingredient names, removing HTML tags, and correcting format variations. It is also possible to remove stop words with NLTK and deal with missing values and noisy data. Convert tokens into vectors using techniques such as TF-IDF, Doc2Vec or Word2Vec.
 1. **Recipe storage:** Organize recipes in a structured format such as CSV, associating each recipe with key-value attributes (Attributes: names, ingredients, preparation steps, cooking times, dietary restrictions, views, tastes, backups ...).
 1. **Metadata Collection:** Record metadata such as source URL, publication date, and author if possible.
-1. **Several recommendation models can be used, including Content-Based Filtering, Collaborative Filtering, Hybrid Models, Matrix Factoring and Deep Learning Models.
-1. **Training
+1. **Modeling:** The choice of recommendation model will depend on the data to be collected. Several recommendation models can be used, including Content-Based Filtering, Collaborative Filtering, Hybrid Models, Matrix Factoring and Deep Learning Models.
+1. **Training**
 1. **Evaluation** 
 
 
