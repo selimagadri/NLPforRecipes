@@ -22,5 +22,4 @@
 
 
 
-**Selima Gadri**
-**Ines Ouhichi**
+**Selima Gadri & Ines Ouhichi**
