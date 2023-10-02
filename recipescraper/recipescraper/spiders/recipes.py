@@ -44,6 +44,7 @@ class RecipesSpider(scrapy.Spider):
 
     def parse_recipe_page(self, response):
 
+
         #RECIPE NAME
         recipe_name = response.css('h1.SHRD__sc-10plygc-0.itJBWW::text').extract()
 
