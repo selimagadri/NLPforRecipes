@@ -154,6 +154,7 @@ class RecipesSpider(scrapy.Spider):
             'temps de preparation' : prep_time,
             'etapes' : steps
         }
+        
         #scrapy crawl -o out.csv recipes
         #add comments, stars(note), name of similar recipes
       
