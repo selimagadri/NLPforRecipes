@@ -140,6 +140,16 @@ class RecipesSpider(scrapy.Spider):
             # Append the step
             steps[step_num_str] = details
 
+
+        #RATING
+        # Extract the individual parts
+        rating = response.css('.SHRD__sc-10plygc-0.jHwZwD::text').extract()[0]
+        anti = response.css('.SHRD__sc-10plygc-0.jHwZwD::text').extract()[1]
+        totalRating = response.css('.SHRD__sc-10plygc-0.jHwZwD::text').extract()[2]
+        # Join the parts together
+        GivenRating = rating + anti + totalRating
+
+
         yield {
             'nom_de_recette' : recipe_name,
             'type_de_recette' : recipe_type,
