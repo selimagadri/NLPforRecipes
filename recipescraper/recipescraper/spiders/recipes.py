@@ -159,7 +159,8 @@ class RecipesSpider(scrapy.Spider):
             'nombre_de_personnes': number_of_persons,
             'difficulte': dif,
             'temps de preparation' : prep_time,
-            'etapes' : steps
+            'etapes' : steps,
+            'score' : GivenRating
         }
         # scrapy crawl -o out.csv recipes
         # add comments, stars(note), name of similar recipes, 

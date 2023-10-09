@@ -161,5 +161,4 @@ cython_debug/
 #.idea/
 
 out.csv
-out1.csv
 test.ipynb
