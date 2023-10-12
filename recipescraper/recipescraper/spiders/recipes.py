@@ -1,4 +1,10 @@
 import scrapy
+import re
+import json
+from scrapy.spidermiddlewares.httperror import HttpError
+from twisted.internet.error import DNSLookupError
+from twisted.internet.error import TimeoutError, TCPTimedOutError
+
 
 
 class RecipesSpider(scrapy.Spider):
@@ -43,6 +49,8 @@ class RecipesSpider(scrapy.Spider):
             yield response.follow(page_url, callback=self.parse)
 
     def parse_recipe_page(self, response):
+
+        self.logger.info("Got successful response from {}".format(response.url))
 
         #RECIPE NAME
         recipe_name = response.css('h1.SHRD__sc-10plygc-0.itJBWW::text').extract()
@@ -150,7 +158,10 @@ class RecipesSpider(scrapy.Spider):
         GivenRating = rating + anti + totalRating
 
 
-        yield {
+        #Number of COMMENTS
+        nb_comm = int(response.css('span.SHRD__sc-10plygc-0.cAYPwA::text').extract()[0].split(' ')[0])
+
+        recipe = {
             'nom_de_recette' : recipe_name,
             'type_de_recette' : recipe_type,
             'type_du_plat' : recipe_sub_type,
@@ -158,10 +169,82 @@ class RecipesSpider(scrapy.Spider):
             'ustensiles': ustensils,
             'nombre_de_personnes': number_of_persons,
             'difficulte': dif,
-            'temps de preparation' : prep_time,
+            'temps_de_preparation' : prep_time,
             'etapes' : steps,
-            'score' : GivenRating
+            'score' : GivenRating, 
+            'nbre_de_commentaires': nb_comm
         }
+
+        #Reviews Parser
+        url = response.url
+        # Use regular expression to extract the recipe ID
+        match = re.search(r'(\d+)\.aspx$', url)
+        recipe_id = match.group(1)
+        page_number = 1
+        reviews_limit = nb_comm
+        url_reviews = f'https://api-uno.marmiton.org/origin/{recipe_id}/reviews?originType=RECIPE&page={page_number}&limit={reviews_limit}'
+
+        headers = {
+            "Accept": "application/json, text/plain, */*",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 OPR/102.0.0.0",
+            "X-Site-Id": "13"
+            }
+        
+        yield scrapy.Request(url=url_reviews, headers=headers, callback=self.parse_reviews, meta=recipe, errback=self.errback_httpbin,
+                             dont_filter=True,)
+
+    def parse_reviews(self, response):
+
+        self.logger.info("Got successful response from reviews {}".format(response.url))
+
+        data = json.loads(response.text)
+        # You can now extract and process the data as needed
+        reviews  = []
+        for review in data.get("hits", []):
+            rev = str(review.get("content"))
+            username = review.get("username")
+            reviews.append({'commentaire':rev.replace('\n',' '),
+                            'utilisateur': username})
+
+        yield {
+            'nom_de_recette' : response.meta['nom_de_recette'],
+            'type_de_recette' : response.meta['type_de_recette'],
+            'type_du_plat' : response.meta['type_du_plat'],
+            'ingredients': response.meta['ingredients'],
+            'ustensiles': response.meta['ustensiles'],
+            'nombre_de_personnes': response.meta['nombre_de_personnes'],
+            'difficulte': response.meta['difficulte'],
+            'temps_de_preparation' : response.meta['temps_de_preparation'],
+            'etapes' : response.meta['etapes'],
+            'score' : response.meta['score'],
+            'nbre_de_commentaires' : response.meta['nbre_de_commentaires'],
+            'commentaires': reviews,
+            'nb_com_test': len(reviews)
+        }
+
+    def errback_httpbin(self, failure):
+        # log all failures
+        self.logger.error(repr(failure))
+
+        # in case you want to do something special for some errors,
+        # you may need the failure's type:
+
+        if failure.check(HttpError):
+            # these exceptions come from HttpError spider middleware
+            # you can get the non-200 response
+            response = failure.value.response
+            self.logger.error("HttpError on %s", response.url)
+
+        elif failure.check(DNSLookupError):
+            # this is the original request
+            request = failure.request
+            self.logger.error("DNSLookupError on %s", request.url)
+
+        elif failure.check(TimeoutError, TCPTimedOutError):
+            request = failure.request
+            self.logger.error("TimeoutError on %s", request.url)
+        else:
+            self.logger.info('other probs')
         # scrapy crawl -o out.csv recipes
         # add comments, stars(note), name of similar recipes, 
         # dietary restrictions, tastes, views, saves
