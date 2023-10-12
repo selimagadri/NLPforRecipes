@@ -201,10 +201,10 @@ class RecipesSpider(scrapy.Spider):
         # You can now extract and process the data as needed
         reviews  = []
         for review in data.get("hits", []):
-            rev = str(review.get("content"))
+            rev = str(review.get("content")).replace('\n','').replace("\"",",")
             username = review.get("username")
-            reviews.append({'commentaire':rev.replace('\n',' '),
-                            'utilisateur': username})
+            reviews.append({'commentaire':str(rev),'utilisateur': username})
+            
 
         yield {
             'nom_de_recette' : response.meta['nom_de_recette'],
@@ -245,6 +245,8 @@ class RecipesSpider(scrapy.Spider):
             self.logger.error("TimeoutError on %s", request.url)
         else:
             self.logger.info('other probs')
+
+
         # scrapy crawl -o out.csv recipes
         # add comments, stars(note), name of similar recipes, 
         # dietary restrictions, tastes, views, saves
