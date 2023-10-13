@@ -30,7 +30,7 @@ class RecipesSpider(scrapy.Spider):
         # Check the current URL and extract the total number of pages dynamically
         if "aperitif-ou-buffet" in response.url:
             total_pages = 85  # Update with the correct number of pages 85
-            #total_pages = int(response.css('div.showMorePages > li:last-child > a::text').extract())
+            #total_pages = int(response.css('div.showMorePages > li:last-child > a::text').extract()) #extract the total number of pages dynamically 
         elif "entree" in response.url:
             total_pages = 186  # Update with the correct number of pages 186
         elif "plat-principal" in response.url:
