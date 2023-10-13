@@ -29,13 +29,14 @@ class RecipesSpider(scrapy.Spider):
 
         # Check the current URL and extract the total number of pages dynamically
         if "aperitif-ou-buffet" in response.url:
-            total_pages = 1  # Update with the correct number of pages 85
+            total_pages = 85  # Update with the correct number of pages 85
+            #total_pages = int(response.css('div.showMorePages > li:last-child > a::text').extract())
         elif "entree" in response.url:
-            total_pages = 1  # Update with the correct number of pages 186
+            total_pages = 186  # Update with the correct number of pages 186
         elif "plat-principal" in response.url:
-            total_pages = 1  # Update with the correct number of pages 568
+            total_pages = 568  # Update with the correct number of pages 568
         elif "dessert" in response.url:
-            total_pages = 1  # Update with the correct number of pages 428
+            total_pages = 428  # Update with the correct number of pages 428
         else:
          # Handle other cases
             total_pages = 0
@@ -116,7 +117,10 @@ class RecipesSpider(scrapy.Spider):
         number_of_persons = response.css('span.SHRD__sc-w4kph7-4.knYsyq::text').extract()
 
         # DIFFICULTY 
-        dif = response.css('p.RCP__sc-1qnswg8-1.iDYkZP::text').extract()[1] 
+        dif = response.css('p.RCP__sc-1qnswg8-1.iDYkZP::text').extract()[1]
+
+        # BUDGET 
+        budget = response.css('p.RCP__sc-1qnswg8-1.iDYkZP::text').extract()[2] 
 
         # PREP TIME
         prep_time_elements = response.css('span.SHRD__sc-10plygc-0.bzAHrL::text').extract()
@@ -137,7 +141,7 @@ class RecipesSpider(scrapy.Spider):
             step_num_str = ' '.join(step_num).strip()
             details = {
                 'ingredients': None,
-                'description' : None
+                'description' : ''
             }
             # Extract the ingredients needed for this step
             ing_step = step.css('img::attr(alt)').extract()
@@ -169,6 +173,7 @@ class RecipesSpider(scrapy.Spider):
             'ustensiles': ustensils,
             'nombre_de_personnes': number_of_persons,
             'difficulte': dif,
+            'budget': budget,
             'temps_de_preparation' : prep_time,
             'etapes' : steps,
             'score' : GivenRating, 
@@ -201,9 +206,10 @@ class RecipesSpider(scrapy.Spider):
         # You can now extract and process the data as needed
         reviews  = []
         for review in data.get("hits", []):
-            rev = str(review.get("content")).replace('\n','').replace("\"",",")
+            # rev = str(review.get("content")).replace('\n','').replace("\"",",")
             username = review.get("username")
-            reviews.append({'commentaire':str(rev),'utilisateur': username})
+            # reviews.append({'commentaire':str(rev),'utilisateur': username})
+            reviews.append(str(review.get('content')).replace('\"','').replace('\n','').replace(',',' '))
             
 
         yield {
@@ -214,12 +220,12 @@ class RecipesSpider(scrapy.Spider):
             'ustensiles': response.meta['ustensiles'],
             'nombre_de_personnes': response.meta['nombre_de_personnes'],
             'difficulte': response.meta['difficulte'],
+            'budget': response.meta['budget'],
             'temps_de_preparation' : response.meta['temps_de_preparation'],
             'etapes' : response.meta['etapes'],
             'score' : response.meta['score'],
             'nbre_de_commentaires' : response.meta['nbre_de_commentaires'],
             'commentaires': reviews,
-            'nb_com_test': len(reviews)
         }
 
     def errback_httpbin(self, failure):
@@ -244,12 +250,11 @@ class RecipesSpider(scrapy.Spider):
             request = failure.request
             self.logger.error("TimeoutError on %s", request.url)
         else:
-            self.logger.info('other probs')
+            self.logger.info('other errors')
 
 
-        # scrapy crawl -o out.csv recipes
-        # add comments, stars(note), name of similar recipes, 
-        # dietary restrictions, tastes, views, saves
+
+# scrapy crawl -o out.csv recipes
 
 
 
