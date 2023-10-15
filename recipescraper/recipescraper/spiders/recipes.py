@@ -11,9 +11,9 @@ class RecipesSpider(scrapy.Spider):
     name = "recipes"
     allowed_domains = ["www.marmiton.org"]
     start_urls = ["https://www.marmiton.org/recettes/index/categorie/aperitif-ou-buffet/",
-                  "https://www.marmiton.org/recettes/index/categorie/entree/",
-                  "https://www.marmiton.org/recettes/index/categorie/plat-principal/",
-                  "https://www.marmiton.org/recettes/index/categorie/dessert/",
+                  #"https://www.marmiton.org/recettes/index/categorie/entree/",
+                  #"https://www.marmiton.org/recettes/index/categorie/plat-principal/",
+                  #"https://www.marmiton.org/recettes/index/categorie/dessert/",
                   
     ]
     def parse(self, response):
@@ -29,7 +29,7 @@ class RecipesSpider(scrapy.Spider):
 
         # Check the current URL and extract the total number of pages dynamically
         if "aperitif-ou-buffet" in response.url:
-            total_pages = 85  # Update with the correct number of pages 85
+            total_pages = 1  # Update with the correct number of pages 85
             #total_pages = int(response.css('div.showMorePages > li:last-child > a::text').extract()) #extract the total number of pages dynamically 
         elif "entree" in response.url:
             total_pages = 186  # Update with the correct number of pages 186
@@ -213,10 +213,10 @@ class RecipesSpider(scrapy.Spider):
         # You can now extract and process the data as needed
         reviews  = []
         for review in data.get("hits", []):
-            # rev = str(review.get("content")).replace('\n','').replace("\"",",")
-            username = review.get("username")
-            # reviews.append({'commentaire':str(rev),'utilisateur': username})
-            reviews.append(str(review.get('content')).replace('\"','').replace('\n','').replace(',',' '))
+            rev = str(review.get("content")).replace('\n','').replace("\"",",")
+            rating = review.get("rating")
+            reviews.append({'commentaire':rev,'note': rating})
+            #reviews.append(str(review.get('content')).replace('\"','').replace('\n','').replace(',',' '))
             
 
         yield {
