@@ -161,6 +161,12 @@ class RecipesSpider(scrapy.Spider):
         # Join the parts together
         GivenRating = rating + anti + totalRating
 
+        #SIMILAR RECIPES
+        div_elements = response.css('div.RCP__sc-1ybli6a-1.htLBiR')
+        # Extract data from the first div.RCP__sc-1ybli6a-1.htLBiR element
+        if div_elements:
+            sim = div_elements[0].css('div > div > div > ul > li > a > p.MuiTypography-root.RCP__sc-1cs7kbv-5.dMNxOq.MuiTypography-body2::text').extract()
+        
 
         #Number of COMMENTS
         nb_comm = int(response.css('span.SHRD__sc-10plygc-0.cAYPwA::text').extract()[0].split(' ')[0])
@@ -177,6 +183,7 @@ class RecipesSpider(scrapy.Spider):
             'temps_de_preparation' : prep_time,
             'etapes' : steps,
             'score' : GivenRating, 
+            'similaire' : sim,
             'nbre_de_commentaires': nb_comm
         }
 
@@ -224,6 +231,7 @@ class RecipesSpider(scrapy.Spider):
             'temps_de_preparation' : response.meta['temps_de_preparation'],
             'etapes' : response.meta['etapes'],
             'score' : response.meta['score'],
+            'similaire' : response.meta['similaire'],
             'nbre_de_commentaires' : response.meta['nbre_de_commentaires'],
             'commentaires': reviews,
         }
