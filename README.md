@@ -9,7 +9,7 @@
 - **Dataset:** [dataset](https://drive.google.com/file/d/1mTUZPUXeXSPW1N-oA9Ubp7XjgPovSxaQ/view?usp=drive_link) - CSV File containing the dataset used for training and evaluation.
 - **Checkpoints:** [final_checkpoints.pth]([checkpoints/](https://drive.google.com/file/d/1iHag8JuQYJoT6geBgv1FV00Pb0RPH0oc/view?usp=sharing)) - File containing model checkpoints.
 
-**Project Description :**
+## **Project Description :**
 
 **Objective:** Collect a large dataset of recipes from various French cooking websites to build a corpus of recipes (in French).
 
