@@ -1,5 +1,13 @@
 # NLPforRecipes
 
+## **Project Structure**
+
+- **Scraper:** [recipes.py](recipescraper/recipescraper/spiders/recipes.py) - Python script for scraping recipes from the Marmiton website.
+- **Notebooks:**
+  - [Data Exploration Notebook](data_exploration.ipynb) - Jupyter notebook containing code for data exploration.
+  - [Preprocessing and Training Notebook](NLPRecipesClassificationTypeOfRecipe.ipynb) - Jupyter notebook containing code for data preprocessing and model training.
+- **Dataset:** [dataset](https://drive.google.com/file/d/1mTUZPUXeXSPW1N-oA9Ubp7XjgPovSxaQ/view?usp=drive_link) - CSV File containing the dataset used for training and evaluation.
+- **Checkpoints:** [final_checkpoints.pth]([checkpoints/](https://drive.google.com/file/d/1iHag8JuQYJoT6geBgv1FV00Pb0RPH0oc/view?usp=sharing)) - File containing model checkpoints.
 
 **Project Description :**
 
