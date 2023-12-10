@@ -5,8 +5,6 @@
 
 **Objective:** Collect a large dataset of recipes from various French cooking websites to build a corpus of recipes (in French).
 
-**Use case:** Recipe recommendation: Use the corpus to create a recommendation system that suggests recipes based on the user's culinary preferences, dietary restrictions or available ingredients.
-
 **Data sources:** websites or cooking platforms that provide a wide range of recipes. Popular sources include: Marmiton, Cuisine AZ.
 
 **Steps for building the corpus of recipes and modeling:**.
